@@ -1,0 +1,15 @@
+.card {
+  border: 2px solid #efefef;
+  margin: 10px 20px;
+  padding: 10px 10px;
+  text-align: center;
+  width: 10%;
+  display: inline-block;
+  border-radius: 10px;
+  font-size: 50px;
+  opacity: 0.5;
+}
+
+.card.inPlay {
+  opacity: 1;
+}

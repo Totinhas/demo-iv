@@ -1,0 +1,26 @@
+nav {
+  background-color: #bada5f;
+}
+
+nav ul {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 20px 20px;
+}
+
+nav ul li {
+  display: block;
+  margin: 0 1vmin;
+}
+
+nav ul li a {
+  text-decoration: none;
+  color: #ffffff;
+  font-weight: bold;
+}
+
+nav ul li a.active {
+  text-decoration: underline;
+  color: #ff4e50;
+}
