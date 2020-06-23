@@ -16,6 +16,13 @@ export const shuffle = (arr, inPlace = true) => {
   return base;
 };
 
+export const createPlayers = (numOfPlayers) => {
+  const players = [];
+  for (let i = 0; i < numOfPlayers; i++) {
+    players.push({ name: "", score: 0 });
+  }
+  return players;
+};
 export const getCardsFlipped = (deck) => {
   return deck.filter((element) => element.flipped);
 };

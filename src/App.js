@@ -3,7 +3,7 @@ import "./App.css";
 import { Switch, Route, useHistory } from "react-router-dom";
 import { HomePage, GamePage, SettingsPage } from "./pages";
 import { symbols } from "./constants";
-import { createDeck, shuffle } from "./utilities";
+import { createDeck, shuffle, createPlayers } from "./utilities";
 
 const allCards = symbols.concat(symbols);
 
@@ -11,8 +11,8 @@ function App() {
   const history = useHistory();
   const createNewDeck = () => createDeck(shuffle(allCards));
   const [deck, setDeck] = useState(createNewDeck());
-  const [turn, setTurn] = useState([]);
-  const [player, setPlayer] = useState({ name: "Sara", score: 0 });
+  const [turn, setTurn] = useState({ currentPlayer: 0, cards: [] });
+  const [players, setPlayers] = useState(createPlayers(2));
   const onReset = () => setDeck(createNewDeck());
   const onClick = (e) => {
     const clickedCard = +e.target.dataset.number;
@@ -21,45 +21,69 @@ function App() {
         i !== clickedCard ? card : { ...card, flipped: !card.flipped }
       )
     );
-    setTurn(turn.concat([clickedCard]));
+    setTurn({ ...turn, cards: turn.cards.concat([clickedCard]) });
   };
   const startGame = () => {
     history.push("/game");
   };
-  const onChangePlayer1Name = (event) => {
-    setPlayer({ ...player, name: event.target.value });
+  const onChangePlayers = (event) => {
+    setPlayers(
+      players.map((player, index) =>
+        index === parseInt(event.target.dataset.id)
+          ? { ...player, name: event.target.value }
+          : player
+      )
+    );
   };
 
   useEffect(() => {
     console.log("useEffect", turn);
-    if (turn.length === 2) {
-      if (deck[turn[0]].symbol === deck[turn[1]].symbol) {
+    if (turn.cards.length === 2) {
+      if (deck[turn.cards[0]].symbol === deck[turn.cards[1]].symbol) {
         setDeck(
           deck.map((card, i) =>
-            i === turn[0] || i === turn[1] ? { ...card, inPlay: false } : card
+            i === turn.cards[0] || i === turn.cards[1]
+              ? { ...card, inPlay: false }
+              : card
           )
         );
-        setPlayer({ ...player, score: player.score + 1 });
-        setTurn([]);
+        setPlayers(
+          players.map((player, index) =>
+            index === turn.currentPlayer
+              ? { ...player, score: player.score + 1 }
+              : player
+          )
+        );
+
+        setTurn({ ...turn, cards: [] });
       } else {
         setTimeout(() => {
           console.log("setTimeout", turn);
           setDeck(
             deck.map((card, i) =>
-              i === turn[0] || i === turn[1]
+              i === turn.cards[0] || i === turn.cards[1]
                 ? { ...card, flipped: false }
                 : card
             )
           );
-          setTurn([]);
+          console.log(turn.currentPlayer + 1, players.length);
+          setTurn({
+            ...turn,
+            cards: [],
+            currentPlayer:
+              turn.currentPlayer + 1 < players.length
+                ? turn.currentPlayer + 1
+                : 0,
+          });
         }, 1000);
       }
     }
-  }, [deck, turn, player]);
+  }, [deck, turn, players]);
 
   // players
   // 1P: name(state), score count(state), game end (* flipped === true)
   // 2P: turn swap
+  // player goes again - win
 
   // home: 1x input -> state, [start game] if input has value
   // highscores: diplay after game end (state)
@@ -75,8 +99,8 @@ function App() {
       <Route path="/" exact component={HomePage}>
         <HomePage
           startGame={startGame}
-          onChangePlayer1Name={onChangePlayer1Name}
-          player1Name={player.name}
+          onChangePlayers={onChangePlayers}
+          players={players}
         />
       </Route>
       <Route path="/game" exact>
@@ -84,8 +108,8 @@ function App() {
           deck={deck}
           onClick={onClick}
           onReset={onReset}
-          player1Name={player.name}
-          player1Score={player.score}
+          players={players}
+          turn={turn}
         />
       </Route>
       <Route path="/settings" exact component={SettingsPage} />
