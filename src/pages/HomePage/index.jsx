@@ -1,6 +1,6 @@
 import React from "react";
 
-const HomePage = ({ startGame, onChangePlayers, players }) => (
+const HomePage = ({ startGame, onChangePlayers, players, highScores }) => (
   <div>
     {players.map((player, index) => (
       <div key={index}>
@@ -17,6 +17,17 @@ const HomePage = ({ startGame, onChangePlayers, players }) => (
     <button type="button" onClick={startGame}>
       start playing
     </button>
+
+    {highScores.map((player, index) => (
+      <div key={index}>
+        <p>
+          {" "}
+          name: {player.name}
+          <br />
+          score: {player.score}
+        </p>
+      </div>
+    ))}
   </div>
 );
 

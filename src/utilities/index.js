@@ -1,10 +1,15 @@
-export const createDeck = (symbols) =>
-  symbols.map((symbol) => ({
+export const createDeck = (symbols) => {
+  symbols = symbols.split("");
+  symbols = shuffle(symbols.concat(symbols));
+  symbols = symbols.map((symbol) => ({
     symbol,
     flipped: false,
     matched: false,
     inPlay: true,
   }));
+  console.log(symbols);
+  return symbols;
+};
 
 export const shuffle = (arr, inPlace = true) => {
   // shallow copy if not inPlace, modifying the input array otherwise
@@ -25,4 +30,27 @@ export const createPlayers = (numOfPlayers) => {
 };
 export const getCardsFlipped = (deck) => {
   return deck.filter((element) => element.flipped);
+};
+
+export const isGameOver = (deck, players) => {
+  const playersAccumulatedScore = players.reduce(
+    (accumulator, player) => accumulator + player.score,
+    0
+  );
+  console.log("playersAccumulatedScore", playersAccumulatedScore);
+  return playersAccumulatedScore === deck.length / 2;
+};
+
+export const getWinner = (players) => {
+  const sortedPlayers = players.sort(
+    (playerA, playerB) => playerB.score - playerA.score
+  );
+  return sortedPlayers[0];
+};
+
+export const sortPlayers = (players) => {
+  const sortedPlayers = players.sort(
+    (playerA, playerB) => playerB.score - playerA.score
+  );
+  return sortedPlayers;
 };

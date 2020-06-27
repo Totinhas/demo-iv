@@ -2,18 +2,25 @@ import React, { useState, useEffect } from "react";
 import "./App.css";
 import { Switch, Route, useHistory } from "react-router-dom";
 import { HomePage, GamePage, SettingsPage } from "./pages";
-import { symbols } from "./constants";
-import { createDeck, shuffle, createPlayers } from "./utilities";
-
-const allCards = symbols.concat(symbols);
+import {
+  createDeck,
+  createPlayers,
+  isGameOver,
+  getWinner,
+  sortPlayers,
+} from "./utilities";
 
 function App() {
   const history = useHistory();
-  const createNewDeck = () => createDeck(shuffle(allCards));
-  const [deck, setDeck] = useState(createNewDeck());
+  const [deck, setDeck] = useState([]);
   const [turn, setTurn] = useState({ currentPlayer: 0, cards: [] });
-  const [players, setPlayers] = useState(createPlayers(2));
-  const onReset = () => setDeck(createNewDeck());
+  const [players, setPlayers] = useState([]);
+  const [highScores, setHighScores] = useState([]);
+  const [settings, setSettings] = useState({
+    symbols: "🐨🐻🐶🐗🐭🐔🐸🐱🦁🐯🦊🐺🐵🐷🐹🐰",
+    numberOfPlayers: 3,
+  });
+  const onReset = () => setDeck(createDeck(settings.symbols));
   const onClick = (e) => {
     const clickedCard = +e.target.dataset.number;
     setDeck(
@@ -25,6 +32,8 @@ function App() {
   };
   const startGame = () => {
     history.push("/game");
+    setDeck(createDeck(settings.symbols));
+    setPlayers(createPlayers(settings.numberOfPlayers));
   };
   const onChangePlayers = (event) => {
     setPlayers(
@@ -35,11 +44,38 @@ function App() {
       )
     );
   };
+  const onChangeNumber = (event) => {
+    setSettings({ ...settings, numberOfPlayers: event.target.value });
+    setDeck(createDeck(settings.symbols));
+    setPlayers(createPlayers(event.target.value));
+  };
+  const onChangeDifficulty = (event) => {
+    setSettings({ ...settings, symbols: event.target.value });
+    setDeck(createDeck(event.target.value));
+    setPlayers(createPlayers(event.target.value));
+  };
 
   useEffect(() => {
-    console.log("useEffect", turn);
+    console.log("useEffect", deck, turn, players, settings);
+    if (deck.length > 0 && isGameOver(deck, players)) {
+      // who won?
+      console.log(getWinner(players));
+      // push to highscore
+      let newHighScores = highScores.concat([getWinner(players)]);
+      newHighScores = sortPlayers(newHighScores);
+      newHighScores = newHighScores.slice(0, 3);
+      setHighScores(newHighScores);
+      // reset
+      setDeck(createDeck(settings.symbols));
+      setPlayers(
+        players.map((player, index) => {
+          return { ...player, score: 0 };
+        })
+      );
+    }
     if (turn.cards.length === 2) {
       if (deck[turn.cards[0]].symbol === deck[turn.cards[1]].symbol) {
+        // take cards out of play
         setDeck(
           deck.map((card, i) =>
             i === turn.cards[0] || i === turn.cards[1]
@@ -47,6 +83,7 @@ function App() {
               : card
           )
         );
+        // increment player score
         setPlayers(
           players.map((player, index) =>
             index === turn.currentPlayer
@@ -54,45 +91,46 @@ function App() {
               : player
           )
         );
-
+        // same player turn
         setTurn({ ...turn, cards: [] });
       } else {
+        // blocker
+        setDeck(
+          deck.map((card, i) => {
+            return { ...card, inPlay: false };
+          })
+        );
+        // next player turn
+        setTurn({
+          ...turn,
+          cards: [],
+          currentPlayer:
+            turn.currentPlayer + 1 < players.length
+              ? turn.currentPlayer + 1
+              : 0,
+        });
         setTimeout(() => {
           console.log("setTimeout", turn);
+          // flip back and unblock
           setDeck(
             deck.map((card, i) =>
               i === turn.cards[0] || i === turn.cards[1]
-                ? { ...card, flipped: false }
-                : card
+                ? { ...card, flipped: false, inPlay: true }
+                : { ...card, inPlay: true }
             )
           );
-          console.log(turn.currentPlayer + 1, players.length);
-          setTurn({
-            ...turn,
-            cards: [],
-            currentPlayer:
-              turn.currentPlayer + 1 < players.length
-                ? turn.currentPlayer + 1
-                : 0,
-          });
         }, 1000);
       }
     }
-  }, [deck, turn, players]);
-
-  // players
-  // 1P: name(state), score count(state), game end (* flipped === true)
-  // 2P: turn swap
-  // player goes again - win
-
-  // home: 1x input -> state, [start game] if input has value
-  // highscores: diplay after game end (state)
+  }, [deck, turn, players, highScores, settings]);
 
   // settings:
   // numero de players
   // difficulty level = number of emoji (+counter)
 
-  // stretch: prevent quick tripple click
+  // stretch:
+  // opacity only when locked (match)
+  // game ends too quickly
 
   return (
     <Switch>
@@ -101,6 +139,7 @@ function App() {
           startGame={startGame}
           onChangePlayers={onChangePlayers}
           players={players}
+          highScores={highScores}
         />
       </Route>
       <Route path="/game" exact>
@@ -112,7 +151,13 @@ function App() {
           turn={turn}
         />
       </Route>
-      <Route path="/settings" exact component={SettingsPage} />
+      <Route path="/settings" exact>
+        <SettingsPage
+          settings={settings}
+          onChangeNumber={onChangeNumber}
+          onChangeDifficulty={onChangeDifficulty}
+        />
+      </Route>
     </Switch>
   );
 }
