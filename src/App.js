@@ -134,7 +134,7 @@ function App() {
 
   return (
     <Switch>
-      <Route path="/" exact component={HomePage}>
+      <Route path="/demo-iv" exact component={HomePage}>
         <HomePage
           startGame={startGame}
           onChangePlayers={onChangePlayers}
@@ -142,7 +142,7 @@ function App() {
           highScores={highScores}
         />
       </Route>
-      <Route path="/game" exact>
+      <Route path="/demo-iv/game" exact>
         <GamePage
           deck={deck}
           onClick={onClick}
@@ -152,7 +152,7 @@ function App() {
           gameIsOver={gameIsOver}
         />
       </Route>
-      <Route path="/settings" exact>
+      <Route path="/demo-iv/settings" exact>
         <SettingsPage
           settings={settings}
           onChangeNumber={onChangeNumber}

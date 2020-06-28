@@ -7,16 +7,16 @@ const NavBar = () => (
   <nav>
     <ul>
       <li>
-        <NavLink to="/" exact>
+        <NavLink to="/demo-iv" exact>
           {" "}
           Home
         </NavLink>
       </li>
       <li>
-        <NavLink to="/game"> Game</NavLink>
+        <NavLink to="/demo-iv/game"> Game</NavLink>
       </li>
       <li>
-        <NavLink to="/settings"> Settings</NavLink>
+        <NavLink to="/demo-iv/settings"> Settings</NavLink>
       </li>
     </ul>
   </nav>
