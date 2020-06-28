@@ -1,14 +1,14 @@
 export const createDeck = (symbols) => {
-  symbols = symbols.split("");
-  symbols = shuffle(symbols.concat(symbols));
-  symbols = symbols.map((symbol) => ({
+  const symbolsArray = [...symbols];
+  const symbolsDoubled = symbolsArray.concat(symbolsArray);
+  const symbolsShuffled = shuffle(symbolsDoubled);
+  const deck = symbolsShuffled.map((symbol) => ({
     symbol,
     flipped: false,
     matched: false,
     inPlay: true,
   }));
-  console.log(symbols);
-  return symbols;
+  return deck;
 };
 
 export const shuffle = (arr, inPlace = true) => {
@@ -37,7 +37,7 @@ export const isGameOver = (deck, players) => {
     (accumulator, player) => accumulator + player.score,
     0
   );
-  console.log("playersAccumulatedScore", playersAccumulatedScore);
+
   return playersAccumulatedScore === deck.length / 2;
 };
 

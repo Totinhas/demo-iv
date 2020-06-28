@@ -1,7 +1,8 @@
 import React from "react";
+import "./HomePage.css";
 
 const HomePage = ({ startGame, onChangePlayers, players, highScores }) => (
-  <div>
+  <div className="homePage">
     {players.map((player, index) => (
       <div key={index}>
         <label>Player {index + 1}: </label>
@@ -17,7 +18,16 @@ const HomePage = ({ startGame, onChangePlayers, players, highScores }) => (
     <button type="button" onClick={startGame}>
       start playing
     </button>
-
+    <h2>
+      <span role="img" aria-label="star icon">
+        ⭐
+      </span>{" "}
+      High Scores
+      <span role="img" aria-label="star icon">
+        {" "}
+        ⭐
+      </span>
+    </h2>
     {highScores.map((player, index) => (
       <div key={index}>
         <p>

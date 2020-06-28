@@ -1,7 +1,8 @@
 import React from "react";
+import "./SettingsPage.css";
 
 const SettingsPage = ({ settings, onChangeNumber, onChangeDifficulty }) => (
-  <div>
+  <div className="settingsPage">
     <label>Players Number</label>
     <input
       onChange={onChangeNumber}
@@ -15,7 +16,6 @@ const SettingsPage = ({ settings, onChangeNumber, onChangeDifficulty }) => (
       type="text"
       value={settings.symbols}
     ></input>
-    <button>Start</button>
   </div>
 );
 

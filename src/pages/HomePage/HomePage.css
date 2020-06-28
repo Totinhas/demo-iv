@@ -1,13 +1,17 @@
-.gamePage .selectedPlayer {
-  color: #e84393;
-}
-
-.gamePage {
+.homePage {
   padding: 0px 20px;
   text-align: center;
 }
 
-.gamePage button {
+input {
+  margin: 20px 20px;
+}
+
+h2 {
+  color: #bada5f;
+}
+
+.homePage button {
   background-color: #ff4e50;
   border: 0px;
   padding: 20px 20px;
@@ -18,12 +22,4 @@
   font-weight: bold;
   display: block;
   margin: 50px auto;
-}
-
-.gamePage .game-over {
-  color: #ff4e50;
-}
-
-.gamePage .game-on {
-  color: #bada5f;
 }

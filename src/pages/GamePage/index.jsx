@@ -2,12 +2,25 @@ import React from "react";
 import "./GamePage.css";
 import { Card } from "../../components";
 
-const GamePage = ({ deck = [], onReset, onClick, players, turn }) => (
+const GamePage = ({
+  deck = [],
+  onReset,
+  onClick,
+  players,
+  turn,
+  gameIsOver,
+}) => (
   <div className="gamePage">
+    {gameIsOver ? (
+      <h2 className="game-over">Game over!</h2>
+    ) : (
+      <h2 className="game-on">Game on!</h2>
+    )}
+
     {players.map((player, index) => (
       <div key={index}>
         <p className={index === turn.currentPlayer ? "selectedPlayer" : ""}>
-          <strong>Player {index + 1}:</strong> {player.name}
+          <strong>Name:</strong> {player.name}
           <br />
           <strong> Score:</strong> {player.score}
         </p>
